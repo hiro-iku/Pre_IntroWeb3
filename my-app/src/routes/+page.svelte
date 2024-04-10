@@ -11,10 +11,15 @@
 			for (let j = 0; j < cols; j++) {
 				if (i === 0 || j === 0) {
 					// 行番号と列番号を表示する
-					row.push({ row: i, col: j, index: i === 0 && j === 0 ? '' : i === 0 ? j : i });
+					row.push({
+						row: i,
+						col: j,
+						index: i === 0 && j === 0 ? '' : i === 0 ? j : i,
+						highlighted: false
+					});
 				} else {
 					// 積を表示する
-					row.push({ row: i, col: j, product: i * j });
+					row.push({ row: i, col: j, product: i * j, highlighted: false });
 				}
 			}
 			gridData.push(row);
@@ -23,13 +28,22 @@
 	}
 
 	// グリッドのデータを取得
-	const gridData = generateGridData(rows, cols);
+	let gridData = generateGridData(rows, cols);
+
+	// セルをクリックしたときのハンドラ
+	function cellClicked(row, col) {
+		if (row > 0 && col > 0) gridData[row][col].highlighted = !gridData[row][col].highlighted;
+	}
 </script>
 
 <div class="grid">
 	{#each gridData as row, rowIndex}
 		{#each row as cell, colIndex}
-			<div class="cell">
+			<div
+				class="cell"
+				on:click={() => cellClicked(cell.row, cell.col)}
+				class:highlighted={cell.highlighted}
+			>
 				{#if cell.index !== undefined}
 					<span>{cell.index}</span>
 				{:else}
@@ -53,5 +67,9 @@
 		border: 1px solid #aaa;
 		padding: 20px;
 		text-align: center;
+		cursor: pointer;
+	}
+	.highlighted {
+		background-color: yellow;
 	}
 </style>
